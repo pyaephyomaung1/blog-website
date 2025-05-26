@@ -1,5 +1,6 @@
 <?php 
 
+namespace App\Repository;
 use App\Interfaces\CategoryInterface;
 use App\Models\Category;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -24,19 +25,17 @@ class CategoryRepository implements CategoryInterface
         ]);
         return $category;
     }
+   // Better inside delete()
     public function delete(int $id)
     {
-        try{
-            $category = $this->category->findOrFail($id);
-            if($category){
-                $category->delete();
-            } else {
-                return 'Category not found';
-            }
-        } catch(ModelNotFoundException $e){
-            return 'Category Not Found';
+        $category = $this->category->find($id);
+        if (!$category) {
+            throw new ModelNotFoundException("Category not found");
         }
+
+        return $category->delete();
     }
+
     public function find(int $id){
         try{
             $category = $this->category->findOrFail($id);

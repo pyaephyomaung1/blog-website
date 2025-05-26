@@ -56,9 +56,13 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Category $category)
+    public function find(int $id)
     {
-        //
+        $category = $this->categoryInterface->find($id);
+        return response()->json([
+            'message' => 'Category found',
+            'data' => $category
+        ], 200);
     }
 
     /**
