@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Request\Category\CategoryStoreRequest;
-use App\Http\Requests\CategoryUpdateRequest;
+use App\Http\Request\Category\CategoryUpdateRequest;
 use App\Interfaces\CategoryInterface;
 use App\Models\Category;
 use DB;
