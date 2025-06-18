@@ -19,9 +19,20 @@ class PostStoreRequest extends FormRequest
             'title' => ['required', 'string', 'max:255'],
             'body' => ['required', 'string', 'min:10'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
-            'slug' => ['required', 'string', 'max:255'],
-            'user_id' => ['required', 'integer'],
         ];
+    }
+
+
+    private function generateSlug(string $title):string{
+        $slug = Str::slug($title);
+        $originalSlug = $slug;
+        $counter = 1;
+
+        while(\App\Models\Post::where('slug', $slug )->exists()){
+            $slug = $originalSlug . '_' . $counter;
+            $counter++;
+        }
+        return $slug;
     }
 
     protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
