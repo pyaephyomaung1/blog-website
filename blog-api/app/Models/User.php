@@ -21,6 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'bio',
+        'avater',
         'is_admin',
     ];
 
@@ -47,3 +49,15 @@ class User extends Authenticatable
         ];
     }
 }
+
+// Schema::create('users', function (Blueprint $table) {
+//             $table->id();
+//             $table->string('name');
+//             $table->string('email')->unique();
+//             $table->string('password');
+//             $table->longText('bio');
+//             $table->string('avater');
+//             $table->boolean('is_admin');
+//             $table->rememberToken();
+//             $table->timestamps();
+//         });
