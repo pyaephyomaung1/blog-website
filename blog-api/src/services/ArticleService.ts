@@ -1,5 +1,6 @@
 import prisma from "../prisma";
 import { v4 as uuidv4 } from "uuid";
+import { deleteFileFromStorage } from '../middleware/upload'
 
 export class ArticleService {
 
@@ -63,13 +64,13 @@ export class ArticleService {
     });
   }
 
-  async updateArticle( id:string, articleData : {
+   async updateArticle(id: string, articleData: {
     title?: string;
     meta_description?: string;
     body?: string;
     image?: string;
     categoryId?: string;
-  }){
+  }) {
     if (articleData.categoryId) {
       const categoryExists = await prisma.category.findUnique({
         where: { id: articleData.categoryId },
@@ -85,9 +86,29 @@ export class ArticleService {
     });
   }
 
-  async deleteArticle(id:string){
+    async deleteArticle(id: string) {
+    // First, find the article to get its image path
+    const articleToDelete = await prisma.article.findUnique({
+      where: { id },
+    });
+
+    if (!articleToDelete) {
+      throw new Error('Record to delete does not exist.'); // Match Prisma's error for consistency
+    }
+
+    // If the article has an image, attempt to delete it from storage
+    if (articleToDelete.image) {
+      const deleted = deleteFileFromStorage(articleToDelete.image);
+      if (deleted) {
+        console.log(`✅ Image file deleted: ${articleToDelete.image}`);
+      } else {
+        console.warn(`⚠️ Could not delete image file: ${articleToDelete.image}`);
+      }
+    }
+
+    // Now, delete the article record from the database
     return await prisma.article.delete({
-        where : { id },
+      where: { id },
     });
   }
 }
