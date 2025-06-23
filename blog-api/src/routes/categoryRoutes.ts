@@ -10,6 +10,6 @@ router.get('/', categoryController.getAllCategories.bind(categoryController));
 router.get('/:id', categoryController.getCategoryById.bind(categoryController));
 router.post('/create',categoryController.createCategory.bind(categoryController)); // Using your '/create' path
 router.put('/:id', categoryController.updateCategory.bind(categoryController));
-router.delete('/:id',categoryController.deleteCategory.bind(categoryController));
+router.delete('/delete/:id',categoryController.deleteCategory.bind(categoryController));
 
 export default router;
