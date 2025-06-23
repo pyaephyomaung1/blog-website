@@ -1,51 +1,68 @@
-import { AppDataSource } from "../config/database";
-import { Category } from "../models/Category";
+import prisma from "../prisma";
+import { v4 as uuidv4 } from "uuid";
 
 export class CategoryService {
-    private categoryRepository = AppDataSource.getRepository(Category);
+  async getCategories() {
+    return await prisma.category.findMany({
+      orderBy: {
+        name: "asc",
+      },
+    });
+  }
 
-    async getAllCategories():Promise<Category[]> {
-        return await this.categoryRepository.find({
-            order : { name : 'ASC' }
-        })
+  async getCategoryByID(id: string) {
+    return await prisma.category.findUnique({
+      where: { id },
+      include: {
+        articles: true,
+      },
+    });
+  }
+
+  async createCategory(name: string) {
+    const existingCategory = await prisma.category.findUnique({
+      where: { name },
+    });
+    if (existingCategory) {
+      throw new Error(`Category with ${name} already exists`);
     }
 
-    async getCategoryByID(id :number): Promise<Category | null> {
-        return await this.categoryRepository.findOne({
-            where : {id} ,
-            relations : ['articles']
-        });
-    }
+    return await prisma.category.create({
+      data: {
+        id: uuidv4(),
+        name,
+      },
+    });
+  }
 
-    async createCategory(name:string):Promise<Category> {
-        const category = this.categoryRepository.create({
+  async updateCategory(id: string, name: string) {
+    const existingCategoryWithName = await prisma.category.findUnique({
+      where: { name },
+    });
+    if (existingCategoryWithName && existingCategoryWithName.id !== id) {
+      throw new Error(`Category with name "${name}" already exists.`);
+    }
+    return await prisma.category.update({
+        where : { id }, 
+        data : {
             name
-        });
-        return await this.categoryRepository.save(category);
+        },
+    })
+  }
+
+  async deleteCategory(id: string){
+    const categoryWithArticles = await prisma.category.findUnique({
+        where : { id },
+        include : {
+            articles : true
+        },
+    });
+    if (categoryWithArticles && categoryWithArticles.articles.length > 0){
+        throw new Error('Cannot delete category with associated articles. Please delete articles first.')
     }
-
-    async updateCategoryByID(id:number, name:string):Promise<Category | null> {
-        const category = await this.categoryRepository.findOne({
-            where : { id }
-        });
-
-        if(!category){
-            return null;
-        }
-
-        category.name = name;
-        return await this.categoryRepository.save(category);
-    }
-
-    async deleteCategory(id:number):Promise<boolean> {
-        const result = await this.categoryRepository.delete(id);
-        return result.affected! > 1;
-    }
-
-    async categoryExist(name:string):Promise<boolean> {
-        const category = await this.categoryRepository.findOne({
-            where : {name},
-        })
-        return !!category;
-    }
+    return await prisma.category.delete({
+        where : { id },
+    });
+  }
 }
+
