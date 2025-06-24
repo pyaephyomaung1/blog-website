@@ -1,15 +1,17 @@
 import { Router } from 'express';
-import { CategoryController } from '../controllers/CategoryController'; // Import our CategoryController
+import { CategoryController } from '../controllers'; // Import our CategoryController
+import { authenticateToken } from '../middleware/auth'; // Import auth middleware
 
 const router = Router();
 const categoryController = new CategoryController();
 
-// Using arrow functions to ensure 'this' context
-// This is often preferred for readability over .bind()
-router.get('/', categoryController.getAllCategories.bind(categoryController));
-router.get('/:id', categoryController.getCategoryById.bind(categoryController));
-router.post('/create',categoryController.createCategory.bind(categoryController)); // Using your '/create' path
-router.put('/:id', categoryController.updateCategory.bind(categoryController));
-router.delete('/delete/:id',categoryController.deleteCategory.bind(categoryController));
+// Public routes (Anyone can view categories)
+router.get('/', (req, res) => categoryController.getAllCategories(req, res));
+router.get('/:id', (req, res) => categoryController.getCategoryById(req, res));
+
+// Protected routes (Only authenticated admin can create, update, delete categories)
+router.post('/create', authenticateToken, (req, res) => categoryController.createCategory(req, res));
+router.put('/:id', authenticateToken, (req, res) => categoryController.updateCategory(req, res));
+router.delete('/delete/:id', authenticateToken, (req, res) => categoryController.deleteCategory(req, res)); // <-- Confirmed your /delete/:id path
 
 export default router;

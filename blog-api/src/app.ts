@@ -6,6 +6,7 @@ import path from 'path';
 // Import route modules
 import categoryRoutes from './routes/categoryRoutes';
 import articleRoutes from './routes/articleRoutes';
+import authRoutes from './routes/authRoutes';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -22,6 +23,7 @@ app.use(express.urlencoded({ extended: true })); // Parse URL-encoded request bo
 app.use('/images', express.static(path.join(__dirname, '..', 'public', 'images')));
 
 // API Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRoutes); // Categories API endpoints
 app.use('/api/articles', articleRoutes);   // Articles API endpoints
 

@@ -33,3 +33,13 @@ model Article {
   @@map("articles")
 }
 
+model User {
+  id String @id @default(uuid())
+  username String @unique @db.VarChar(100)
+  password String @db.VarChar(100)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
