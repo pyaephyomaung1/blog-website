@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
-import { ArticleService } from '../services/ArticleService';
+import { Request, Response } from "express";
+import { ArticleService } from "../services/ArticleService";
 
 const articleService = new ArticleService();
 
@@ -7,9 +7,10 @@ export class ArticleController {
   async getAllArticles(req: Request, res: Response): Promise<void> {
     try {
       const page = parseInt(req.query.page as string) || 1;
-      const limit = parseInt(req.query.limit as string) || 10;
+      const limit = parseInt(req.query.limit as string) || 12;
 
-      const { articles, total, totalPages, currentPage } = await articleService.getAllArticles(page, limit);
+      const { articles, total, totalPages, currentPage } =
+        await articleService.getAllArticles(page, limit);
 
       res.status(200).json({
         articles,
@@ -22,8 +23,10 @@ export class ArticleController {
         },
       });
     } catch (error: any) {
-      console.error('Error fetching articles:', error);
-      res.status(500).json({ message: 'Error retrieving articles', error: error.message });
+      console.error("Error fetching articles:", error);
+      res
+        .status(500)
+        .json({ message: "Error retrieving articles", error: error.message });
     }
   }
 
@@ -35,11 +38,13 @@ export class ArticleController {
       if (article) {
         res.status(200).json(article);
       } else {
-        res.status(404).json({ message: 'Article not found' });
+        res.status(404).json({ message: "Article not found" });
       }
     } catch (error: any) {
-      console.error('Error fetching article by ID:', error);
-      res.status(500).json({ message: 'Error retrieving article', error: error.message });
+      console.error("Error fetching article by ID:", error);
+      res
+        .status(500)
+        .json({ message: "Error retrieving article", error: error.message });
     }
   }
 
@@ -54,10 +59,12 @@ export class ArticleController {
 
       if (!title || !body || !categoryId) {
         if (req.file) {
-          const fs = require('fs');
+          const fs = require("fs");
           fs.unlinkSync(req.file.path);
         }
-        res.status(400).json({ message: 'Title, body, and category ID are required.' });
+        res
+          .status(400)
+          .json({ message: "Title, body, and category ID are required." });
         return;
       }
 
@@ -71,12 +78,14 @@ export class ArticleController {
 
       res.status(201).json(newArticle);
     } catch (error: any) {
-      console.error('Error creating article:', error);
+      console.error("Error creating article:", error);
       if (req.file) {
-        const fs = require('fs');
+        const fs = require("fs");
         fs.unlinkSync(req.file.path);
       }
-      res.status(500).json({ message: 'Error creating article', error: error.message });
+      res
+        .status(500)
+        .json({ message: "Error creating article", error: error.message });
     }
   }
 
@@ -99,7 +108,8 @@ export class ArticleController {
       } = {};
 
       if (title !== undefined) updateData.title = title;
-      if (meta_description !== undefined) updateData.meta_description = meta_description;
+      if (meta_description !== undefined)
+        updateData.meta_description = meta_description;
       if (body !== undefined) updateData.body = body;
       if (imagePath !== undefined) updateData.image = imagePath;
       if (categoryId !== undefined) updateData.categoryId = categoryId;
@@ -109,15 +119,17 @@ export class ArticleController {
       if (updatedArticle) {
         res.status(200).json(updatedArticle);
       } else {
-        res.status(404).json({ message: 'Article not found' });
+        res.status(404).json({ message: "Article not found" });
       }
     } catch (error: any) {
-      console.error('Error updating article:', error);
+      console.error("Error updating article:", error);
       if (req.file) {
-        const fs = require('fs');
+        const fs = require("fs");
         fs.unlinkSync(req.file.path);
       }
-      res.status(500).json({ message: 'Error updating article', error: error.message });
+      res
+        .status(500)
+        .json({ message: "Error updating article", error: error.message });
     }
   }
 
@@ -126,14 +138,21 @@ export class ArticleController {
       const { id } = req.params;
       const deletedArticle = await articleService.deleteArticle(id);
 
-      res.status(200).json({ message: 'Article deleted successfully', article: deletedArticle });
+      res
+        .status(200)
+        .json({
+          message: "Article deleted successfully",
+          article: deletedArticle,
+        });
     } catch (error: any) {
-      console.error('Error deleting article:', error);
-      if (error.message.includes('Record to delete does not exist')) {
-      res.status(404).json({ message: 'Article not found' });
-      return;
+      console.error("Error deleting article:", error);
+      if (error.message.includes("Record to delete does not exist")) {
+        res.status(404).json({ message: "Article not found" });
+        return;
       }
-      res.status(500).json({ message: 'Error deleting article', error: error.message });
+      res
+        .status(500)
+        .json({ message: "Error deleting article", error: error.message });
     }
   }
 }

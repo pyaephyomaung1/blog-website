@@ -13,6 +13,7 @@ export interface Article {
 }
 
 export interface PaginatedArticles {
+  pagination: any;
   articles: Article[];
   total: number;
   totalPages: number;

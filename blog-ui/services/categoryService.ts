@@ -5,7 +5,7 @@ import { Category } from '@/types/category';
 // Get all categories
 export const getAllCategories = async (): Promise<Category[]> => {
   try {
-    const response = await apiClient.get('/api/categories');
+    const response = await apiClient.get('/api/v1/categories');
     return response.data;
   } catch (error) {
     console.error('Error fetching categories:', error);
@@ -16,7 +16,7 @@ export const getAllCategories = async (): Promise<Category[]> => {
 // Get category by ID (includes articles)
 export const getCategoryById = async (id: string): Promise<Category> => {
   try {
-    const response = await apiClient.get(`/api/categories/${id}`);
+    const response = await apiClient.get(`/api/v1/categories/${id}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching category:', error);
